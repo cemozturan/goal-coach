@@ -1,13 +1,64 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router';
+import { firebaseApp } from '../firebase';
 
 class SignIn extends Component {
-  render() {
-    return (
-      <div>
-		  Sign In
-      </div>
-    );
-  }
+	constructor(props) {
+		super(props);
+		this.state = {
+			email: '',
+			password: '',
+			error: {
+				message: ''
+			}
+		}
+		this.signIn = this.signIn.bind(this);
+	}
+
+	signIn() {
+		const { email, password } = this.state;
+		firebaseApp.auth().signInWithEmailAndPassword(email, password)
+			.catch((error) => {
+				this.setState(() => {
+					return {
+						error
+					};
+				});
+			});
+	}
+
+  	render() {
+    	return (
+      		<div className="form-inline" style={{margin: '5%'}}>
+				<h2>Sign In</h2>
+				<div className="form-group">
+					<input
+						className="form-control"
+						type="text"
+						placeholder="email"
+						style={{marginRight: '5%'}}
+						onChange={(event) => this.setState({email: event.target.value})}
+					/>
+					<input
+						className="form-control"
+						type="text"
+						placeholder="password"
+						style={{marginRight: '5%'}}
+						onChange={(event) => this.setState({password: event.target.value})}
+					/>
+					<button
+						className="btn btn-primary"
+						type="button"
+						onClick={this.signIn}
+					>
+						Sign In
+					</button>
+				</div>
+				<div>{this.state.error.message}</div>
+				<div><Link to="/sign-up">Register</Link></div>
+			</div>
+    	);
+  	}
 }
 
 export default SignIn;
